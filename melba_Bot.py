@@ -35,8 +35,8 @@ async def melbaTip(ctx, *, question):
     await ctx.send(f'Q: {question}\nA: {random.choice(responses)}')
 
 @client.command()
-async def cryptoMelba():
-    CRYPTO_CHANNEL = client.get_channel(CRYPTO_C)
+async def cryptoMelba(ctx):
+    CRYPTO_CHANNEL = client.get_channel(int(CRYPTO_C))
     await CRYPTO_CHANNEL.send('cryptos are on the rise mijo')
 
 @client.command()
