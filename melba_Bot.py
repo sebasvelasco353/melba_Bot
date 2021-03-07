@@ -9,6 +9,15 @@ USER = os.getenv('MELBA_BOT')
 CRYPTO_C = os.getenv('CRYPTO_CHANNEL')
 client = commands.Bot(command_prefix = '!')
 
+# Helper function to know if the bot its already on the voice channel
+def is_connected(ctx):
+    voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
+    if voice:
+        return True
+    else:
+        return False
+
+
 @client.event
 async def on_ready():
    print('We are logged in as {0.user}'.format(client))
@@ -45,6 +54,7 @@ async def cryptoMelba(ctx):
 async def cleanupMelba(ctx, amount=10):
     await ctx.channel.purge(limit=amount)
 
+
 @client.command()
 async def play(ctx, url : str):
     song_there = os.path.isfile("song.mp3")
@@ -56,7 +66,9 @@ async def play(ctx, url : str):
         return
 
     voiceChannel = discord.utils.get(ctx.guild.voice_channels, name='Just chillin')
-    await voiceChannel.connect()
+    if not is_connected(ctx):
+        await voiceChannel.connect()
+
     voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
 
     ydl_opts = {
@@ -72,7 +84,7 @@ async def play(ctx, url : str):
     for file in os.listdir("./"):
         if file.endswith(".mp3"):
             os.rename(file, "song.mp3")
-    voice.play(discord.FFmpegPCMAudio("song.mp3"))
+    voice.play(discord.FFmpegPCMAudio("song.mp3"), after=lambda e: print("Finished playing song"))
 
 @client.command()
 async def leave(ctx):
