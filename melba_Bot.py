@@ -3,10 +3,14 @@ import random
 import discord
 import requests
 import youtube_dl
+from bs4 import BeautifulSoup
+from selenium import webdriver
 from discord.ext import commands
+from selenium.webdriver.chrome.options import Options
 
 USER = os.getenv('MELBA_BOT')
 CRYPTO_C = os.getenv('CRYPTO_CHANNEL')
+DRIVER_PATH = os.getenv('WEB_DRIVER_PATH')
 client = commands.Bot(command_prefix = '!')
 
 # Helper function to know if the bot its already on the voice channel
@@ -16,7 +20,6 @@ def is_connected(ctx):
         return True
     else:
         return False
-
 
 @client.event
 async def on_ready():
@@ -42,6 +45,12 @@ async def melbaTip(ctx, *, question):
         'Read the manual',
         'Have you tried turning it on and off again',
         'Go with the flow...',
+        'Do it, lifes too short',
+        'head first mijo',
+        'just say fuck it and do it',
+        'its inevitable, mijo',
+        'just do it',
+        'FUCK YES!'
     ]
     await ctx.send(f'Q: {question}\nA: {random.choice(responses)}')
 
@@ -54,6 +63,24 @@ async def cryptoMelba(ctx):
 async def cleanupMelba(ctx, amount=10):
     await ctx.channel.purge(limit=amount)
 
+@client.command()
+async def melbaGossip(ctx):
+    URL = 'https://www.bbc.com/news/world'
+    await ctx.channel.send(f'Fetching most recent news article from BBC news, be patient mijo...')
+    options = Options()
+    options.headless = True
+    options.add_argument("--window-size=1920,1200")
+    driver = webdriver.Chrome(options=options, executable_path='./chromedriver')
+    driver.get(URL)
+
+    soup = BeautifulSoup(driver.page_source, 'html.parser')
+    news = soup.find('div', class_='gs-t-News')
+    news_body = news.find('div', class_='gs-c-promo-body')
+    news_link = news_body.find('a', class_='gs-c-promo-heading')['href']
+
+    await ctx.channel.send(f'https://www.bbc.com{news_link}')
+
+    driver.quit()
 
 @client.command()
 async def play(ctx, url : str):
