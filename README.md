@@ -17,9 +17,10 @@ knows everything happening around her, thats where the inspiration comes from.
 - !melbaTip question > responds with a random answer, can be positive, negative or neutral
 - !cleanupMelba > deletes teh last 10 messages on the channel
 - !leave > makes melba leave the voice channel
+- !melbaGossip > brings one random news article from Reuters world news
 - Music related commands are !play !pause !resume !stop
 
 ## Todo
-- !melbaGossip: brings news article
 - !cryptoMelba responds on the crypto channel with the current state of 3 crypto currencies (WIP)
 - Make Melba add songs to queue, but has a max number of 5 songs.
+    - It crashes when the song its more than 15 minutes long.

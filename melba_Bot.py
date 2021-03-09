@@ -31,7 +31,7 @@ async def on_member_join(member):
 
 @client.command()
 async def cmds(ctx):
-    await ctx.send('Mijo, the commands are: \n!melbaTip <--- ask me anything mijo.\n!cryptoMelba <--- i tell you about crypto coins')
+    await ctx.send('Mijo, the commands are: \n!melbaTip question <--- ask me anything mijo.\n!melbaGossip <--- i tell you about recent news from the bbc\n!play youtube <--- plays youtube url')
 
 @client.command()
 async def melbaTip(ctx, *, question):
@@ -65,8 +65,8 @@ async def cleanupMelba(ctx, amount=10):
 
 @client.command()
 async def melbaGossip(ctx):
-    URL = 'https://www.bbc.com/news/world'
-    await ctx.channel.send(f'Fetching most recent news article from BBC news, be patient mijo...')
+    URL = 'https://www.reuters.com/world'
+    await ctx.channel.send('Fetching most recent news article from Reuters, be patient mijo...')
     options = Options()
     options.headless = True
     options.add_argument("--window-size=1920,1200")
@@ -74,11 +74,13 @@ async def melbaGossip(ctx):
     driver.get(URL)
 
     soup = BeautifulSoup(driver.page_source, 'html.parser')
-    news = soup.find('div', class_='gs-t-News')
-    news_body = news.find('div', class_='gs-c-promo-body')
-    news_link = news_body.find('a', class_='gs-c-promo-heading')['href']
-
-    await ctx.channel.send(f'https://www.bbc.com{news_link}')
+    news_container = soup.find_all('div', class_='news-headline-list')
+    news = news_container[1].find_all('article', class_='story')
+    if len(news) > 0:
+        news_article = random.choices(news)[0].find('a')['href']
+        await ctx.channel.send(f'{URL}{news_article}')
+    else:
+        await ctx.channel.send('Got no news today mijo, sorry')
 
     driver.quit()
 
